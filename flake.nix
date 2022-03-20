@@ -36,7 +36,6 @@
       packages.init =
         pkgs.writeShellApplication {
           name = "init";
-          name = "launcher";
           text = (builtins.readFile ./init.sh);
           runtimeInputs = with pkgs; [ ruplacer ];
         };

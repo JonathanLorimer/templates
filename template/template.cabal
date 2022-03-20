@@ -51,6 +51,7 @@ library
 
 executable __package_name
   import: common-opts
+  main-is: Main.hs
   exposed-modules:
       Main
   hs-source-dirs:

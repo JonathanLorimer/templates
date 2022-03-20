@@ -18,7 +18,7 @@
     let
       pkgs = import nixpkgs { inherit system; };
     in
-    {
+    rec {
       templates = {
         haskell-flake = {
           path = ./template;
@@ -31,7 +31,7 @@
         };
       };
 
-      defaultTemplate = self.templates.haskell-flake;
+      defaultTemplate = templates.haskell-flake;
 
       packages.init =
         pkgs.writeShellApplication {
@@ -40,7 +40,7 @@
           runtimeInputs = with pkgs; [ ruplacer ];
         };
 
-      apps.init = utils.mkApp { name = "init"; drv = self.packages.init; };
-      defaultApp = self.apps.init;
+      apps.init = utils.mkApp { name = "init"; drv = packages.init; };
+      defaultApp = apps.init;
     });
 }

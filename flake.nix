@@ -1,47 +1,52 @@
 {
-  description = "Multiformats in haskell";
+  description = "A flake template for haskell flake projects";
 
   inputs = {
-    # Nix Inputs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs =
-    { self
-    , nixpkgs
-    , flake-utils
-    }:
-    let utils = flake-utils.lib;
-    in
-    utils.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in
-      rec {
-
-        packages.init =
-          pkgs.writeShellApplication {
-            name = "init";
-            text = (builtins.readFile ./init.sh);
-            runtimeInputs = with pkgs; [ ruplacer ];
-          };
-
-        apps.init = utils.mkApp { name = "init"; drv = packages.init; };
-        defaultApp = apps.init;
-      }) // {
-        templates = {
-          haskell-flake = {
-            path = ./template;
-            description = "A template that for a haskell project that uses flakes";
-            welcomeText = ''
-              You just created a haskell flake project.
-              run this command to add your projects name:
-                nix run github:JonathanLorimer/haskell-flake-template
-            '';
-          };
-        };
-
-        defaultTemplate = self.templates.haskell-flake;
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }: let
+    utils = flake-utils.lib;
+  in
+    utils.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {inherit system;};
+    in rec {
+      packages.init = pkgs.writeShellApplication {
+        name = "init";
+        text = builtins.readFile ./init.sh;
+        runtimeInputs = with pkgs; [ruplacer];
       };
+
+      apps.init = utils.mkApp {
+        name = "init";
+        drv = packages.init;
+      };
+      defaultApp = apps.init;
+      devShell = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          rnix-lsp
+          alejandra
+        ];
+      };
+    })
+    // {
+      templates = {
+        haskell-flake = {
+          path = ./template;
+          description = "A template that for a haskell project that uses flakes";
+          welcomeText = ''
+            You just created a haskell flake project.
+            run this command to add your projects name:
+              nix run github:JonathanLorimer/haskell-flake-template
+          '';
+        };
+      };
+
+      defaultTemplate = self.templates.haskell-flake;
+    };
 }

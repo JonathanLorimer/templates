@@ -40,7 +40,7 @@
           runtimeInputs = with pkgs; [ ruplacer ];
         };
 
-      apps.init = mkApp { name = "init"; drv = self.packages.init; };
+      apps.init = utils.mkApp { name = "init"; drv = self.packages.init; };
       defaultApp = self.apps.init;
     });
 }

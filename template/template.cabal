@@ -1,0 +1,70 @@
+cabal-version: 2.2
+
+name:           __package_name
+version:        0.0.0.0
+-- synopsis:       $synopsis
+-- description:    $description
+-- category:       $category
+-- homepage:       $gitrepo#readme
+-- bug-reports:    $gitrepo/issues
+-- maintainer:     $maintainer
+build-type:     Simple
+
+-- source-repository head
+--   type: git
+--   location: $gitrepo
+
+common common-opts
+  default-extensions:
+    LambdaCase
+    OverloadedStrings
+    ScopedTypeVariables
+    TupleSections
+    MultiWayIf
+    InstanceSigs
+    RecordWildCards
+    NamedFieldPuns
+    StrictData
+    GADTs
+    NoImplicitPrelude
+    ImportQualifiedPost
+    TypeApplications
+  ghc-options:
+    -Wall
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N
+  build-depends:
+      base
+    , bytestring
+    , containers
+    , text
+  default-language: Haskell2010
+
+
+library
+  import: common-opts
+  exposed-modules:
+      Core
+  hs-source-dirs:
+      src
+
+executable __package_name
+  import: common-opts
+  exposed-modules:
+      Main
+  hs-source-dirs:
+      app
+  build-depends: __package_name
+
+test-suite test
+  import: common-opts
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  hs-source-dirs:
+      test
+  build-depends:
+    , __package_name
+    , QuickCheck
+    , hspec
+    , hspec-expectations

@@ -5,4 +5,4 @@ read -r name
 
 mv ./template.cabal "./$name.cabal"
 
-ruplacer __package_name "$name"
+ruplacer __package_name "$name" --go

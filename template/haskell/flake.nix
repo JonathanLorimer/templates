@@ -4,8 +4,9 @@
   inputs = {
     # Nix Inputs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     flake-utils.url = "github:numtide/flake-utils";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs = {

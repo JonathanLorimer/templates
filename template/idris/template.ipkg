@@ -1,0 +1,8 @@
+package __package_name
+version = 0.1.0
+
+opts = "-Wno-shadowing"
+
+depends = prelude
+
+sourcedir = "src"

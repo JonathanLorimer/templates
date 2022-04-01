@@ -3,6 +3,12 @@ set -e
 echo "What do you want this haskell package to be called? "
 read -r name
 
-mv ./template.cabal "./$name.cabal"
+if [ -f ./template.cabal ]; then
+  mv ./template.cabal "./$name.cabal"
+fi
+
+if [ -f ./template.ipkg ]; then
+  mv ./template.ipkg "./$name.ipkg"
+fi
 
 ruplacer __package_name "$name" --go

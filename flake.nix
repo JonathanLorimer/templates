@@ -36,13 +36,22 @@
     })
     // {
       templates = {
-        haskell-flake = {
-          path = ./template;
+        haskell = {
+          path = ./template/haskell;
           description = "A template that for a haskell project that uses flakes";
           welcomeText = ''
             You just created a haskell flake project.
             run this command to add your projects name:
-              nix run github:JonathanLorimer/haskell-flake-template
+              nix run github:JonathanLorimer/templates
+          '';
+        };
+        idris = {
+          path = ./template/idris;
+          description = "A template that for an idris2 project";
+          welcomeText = ''
+            You just created an idris2 project.
+            run this command to add your projects name:
+              nix run github:JonathanLorimer/templates
           '';
         };
       };

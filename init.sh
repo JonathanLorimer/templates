@@ -1,6 +1,6 @@
 set -e
 
-echo "What do you want this haskell package to be called? "
+echo "What do you want this package to be called? "
 read -r name
 
 if [ -f ./template.cabal ]; then

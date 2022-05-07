@@ -65,6 +65,6 @@
         };
       };
 
-      defaultTemplate = self.templates.haskell-flake;
+      defaultTemplate = self.templates.haskell;
     };
 }

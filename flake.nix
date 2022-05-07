@@ -54,6 +54,15 @@
               nix run github:JonathanLorimer/templates
           '';
         };
+        rust = {
+          path = ./template/rust;
+          description = "A template that for a rust project";
+          welcomeText = ''
+            You just created a rust project.
+            run this command to add your projects name:
+              nix run github:JonathanLorimer/templates
+          '';
+        };
       };
 
       defaultTemplate = self.templates.haskell-flake;

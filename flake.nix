@@ -22,11 +22,13 @@
         runtimeInputs = with pkgs; [ruplacer];
       };
 
-      apps.init = utils.mkApp {
-        name = "init";
-        drv = packages.init;
+      apps = rec {
+        init = utils.mkApp {
+          name = "init";
+          drv = packages.init;
+        };
+        default = init;
       };
-      defaultApp = apps.init;
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
           rnix-lsp

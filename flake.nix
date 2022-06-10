@@ -36,7 +36,7 @@
       templates = {
         haskell = {
           path = ./template/haskell;
-          description = "A template that for a haskell project that uses flakes";
+          description = "A template for a haskell project that uses flakes";
           welcomeText = ''
             You just created a haskell flake project.
             run this command to add your projects name:
@@ -45,7 +45,7 @@
         };
         idris = {
           path = ./template/idris;
-          description = "A template that for an idris2 project";
+          description = "A template for an idris2 project";
           welcomeText = ''
             You just created an idris2 project.
             run this command to add your projects name:
@@ -54,7 +54,7 @@
         };
         rust = {
           path = ./template/rust;
-          description = "A template that for a rust project";
+          description = "A template for a rust project";
           welcomeText = ''
             You just created a rust project.
             run this command to add your projects name:

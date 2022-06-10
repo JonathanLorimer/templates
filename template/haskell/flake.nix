@@ -18,8 +18,7 @@
     utils = flake-utils.lib;
   in
     utils.eachDefaultSystem (system: let
-      supportedGHCVersion = "921";
-      compilerVersion = "ghc${supportedGHCVersion}";
+      compilerVersion = "__ghcVersion";
       pkgs = nixpkgs.legacyPackages.${system};
       hsPkgs = pkgs.haskell.packages.${compilerVersion}.override {
         overrides = hfinal: hprev: {

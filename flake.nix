@@ -16,11 +16,7 @@
     utils.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
     in rec {
-      packages.init = pkgs.writeShellApplication {
-        name = "init";
-        text = builtins.readFile ./init.sh;
-        runtimeInputs = with pkgs; [ruplacer];
-      };
+      packages.init = import ./init.nix { pkgs = pkgs; };
 
       apps = rec {
         init = utils.mkApp {

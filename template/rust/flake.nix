@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = github:NixOS/nixpkgs/nixpkgs-unstable;
+    nixpkgs.url = github:NixOS/nixpkgs/__nixpkgs;
     crane.url = github:ipetkov/crane;
     pre-commit-hooks.url = github:cachix/pre-commit-hooks.nix;
     flake-utils.url = github:numtide/flake-utils;

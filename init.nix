@@ -11,7 +11,7 @@ pkgs.writeShellScriptBin "init"
     ${pkgs.curl}/bin/curl -s https://monitoring.nixos.org/prometheus/api/v1/query?query=channel_revision |\
     ${pkgs.jq}/bin/jq '.data.result[].metric.channel' |\
     ${pkgs.gnused}/bin/sed -e 's/^"//' -e 's/"$//' |\
-    ${pkgs.fzf}/bin/fzf
+    ${pkgs.fzf}/bin/fzf --header-first --header 'Choose a Nixpkgs release'
   )
 
   ${pkgs.ruplacer}/bin/ruplacer __nixpkgs "$BRANCH" --go
@@ -24,7 +24,7 @@ pkgs.writeShellScriptBin "init"
       ${pkgs.pup}/bin/pup '.js-navigation-open.Link--primary:contains(".nix") text{}' |\
       ${pkgs.sd}/bin/sd '(\d{1,2}).(\d{1,2}).(\d{1,2}).nix' 'ghc$1$2$3' |\
       ${pkgs.gawk}/bin/awk '/ghc/{print}' |\
-      ${pkgs.fzf}/bin/fzf
+      ${pkgs.fzf}/bin/fzf --header-first --header 'Choose a version of GHC'
     )
 
     echo $GHCVERSION

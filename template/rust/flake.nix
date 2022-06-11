@@ -24,9 +24,6 @@
         __package_name = craneLib.buildPackage {
           inherit cargoArtifacts src;
           nativeBuildInputs = with pkgs; [
-            leveldb
-            snappy
-            cmake
           ];
         };
         __package_name-coverage = craneLib.cargoTarpaulin {

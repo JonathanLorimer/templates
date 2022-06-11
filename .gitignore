@@ -1,2 +1,4 @@
-/result
-/build/result
+result
+result-*
+build/result
+build/result-*

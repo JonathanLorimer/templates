@@ -1,4 +1,4 @@
-# haskell-flake-template
+# Flake Templates
 
 ```
 nix flake init -t github:JonathanLorimer/templates#haskell

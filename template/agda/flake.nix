@@ -2,7 +2,7 @@
   description = "__package_name";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixpkgs-unstable;
+    nixpkgs.url = github:nixos/nixpkgs/__nixpkgs;
     flake-utils.url = github:numtide/flake-utils;
     cornelis.url = github:isovector/cornelis;
   };

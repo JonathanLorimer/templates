@@ -61,6 +61,15 @@
               nix run github:JonathanLorimer/templates
           '';
         };
+        agda = {
+          path = ./template/agda;
+          description = "A template for an agda project";
+          welcomeText = ''
+            You just created an agda project.
+            run this command to add your projects name:
+              nix run github:JonathanLorimer/templates
+          '';
+        };
       };
 
       defaultTemplate = self.templates.haskell;

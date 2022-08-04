@@ -37,6 +37,10 @@ pkgs.writeShellScriptBin "init"
     mv ./template.ipkg "./$name.ipkg"
   fi
 
+  if [ -f ./template.agda-lib ]; then
+    mv ./template.agda-lib "./$name.agda-lib"
+  fi
+
   ${pkgs.ruplacer}/bin/ruplacer __package_name "$name" --go
 
   ${pkgs.git}/bin/git init

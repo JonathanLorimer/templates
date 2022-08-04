@@ -1,0 +1,5 @@
+name: __package_name
+include:
+  src
+depend:
+  standard-library

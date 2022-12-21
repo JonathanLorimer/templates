@@ -70,6 +70,15 @@
               nix run github:JonathanLorimer/templates
           '';
         };
+        flake = {
+          path = ./template/flake;
+          description = "A template for a generic flake project";
+          welcomeText = ''
+            You just created a flake project.
+            run this command to add your projects name:
+              nix run github:JonathanLorimer/templates
+          '';
+        };
       };
 
       defaultTemplate = self.templates.haskell;

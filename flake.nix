@@ -4,17 +4,34 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    crane.url = "github:ipetkov/crane";
+    rustOverlay.url = "github:oxalica/rust-overlay";
+    devshell.url = "github:numtide/devshell";
   };
 
   outputs = {
     self,
     nixpkgs,
     flake-utils,
+    crane,
+    rustOverlay,
+    devshell,
   }: let
     utils = flake-utils.lib;
   in
     utils.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {inherit system;};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          (import rustOverlay)
+          devshell.overlay
+        ];
+      };
+
+      rustToolchain = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
+        toolchain.default.override {
+          extensions = ["rust-src"];
+        });
     in rec {
       packages.init = import ./init.nix { pkgs = pkgs; };
 
@@ -25,11 +42,56 @@
         };
         default = init;
       };
-      devShell = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          rnix-lsp
-          alejandra
+      devShells.default = pkgs.devshell.mkShell {
+        commands = let
+          categories = {
+            hygiene = "hygiene";
+          };
+        in [
+          {
+            help = "Check rustc and clippy warnings";
+            name = "check";
+            command = ''
+              set -x
+              cargo check --all-targets
+              cargo clippy --all-targets
+            '';
+            category = categories.hygiene;
+          }
+          {
+            help = "Automatically fix rustc and clippy warnings";
+            name = "fix";
+            command = ''
+              set -x
+              cargo fix --all-targets --allow-dirty --allow-staged
+              cargo clippy --all-targets --fix --allow-dirty --allow-staged
+            '';
+            category = categories.hygiene;
+          }
         ];
+        imports = ["${devshell}/extra/language/rust.nix"];
+        language.rust = {
+          packageSet = rustToolchain;
+          tools = ["rustc"];
+          enableDefaultToolchain = false;
+        };
+
+        devshell = {
+          name = "templates-devshell";
+          packages = with pkgs;
+            [
+              # Rust build inputs
+              clang
+              coreutils
+
+              # LSP's
+              rust-analyzer
+
+              # Tools
+              rustToolchain
+              alejandra
+            ];
+        };
       };
     })
     // {

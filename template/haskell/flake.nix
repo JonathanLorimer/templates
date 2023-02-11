@@ -5,8 +5,6 @@
     # Nix Inputs
     nixpkgs.url = github:nixos/nixpkgs/__nixpkgs;
     flake-utils.url = github:numtide/flake-utils;
-    pre-commit-hooks.url = github:cachix/pre-commit-hooks.nix;
-    pre-commit-hooks.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs = {
@@ -25,26 +23,22 @@
           __package_name = hfinal.callCabal2nix "__package_name" ./. {};
         };
       };
-    in rec {
+    in {
+      # nix build
       packages =
         utils.flattenTree
-        {__package_name = hsPkgs.__package_name;};
+        {
+          __package_name = hsPkgs.__package_name;
+          default = self.packages.${system}.__package_name;
+        };
 
       # nix flake check
       checks = {
-        pre-commit-check = pre-commit-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            alejandra.enable = true;
-            fourmolu.enable = true;
-            cabal-fmt.enable = true;
-          };
-        };
+        __package_name = self.packages.${system}.__package_name;
       };
 
       # nix develop
       devShell = hsPkgs.shellFor {
-        inherit (self.checks.${system}.pre-commit-check) shellHook;
         withHoogle = true;
         packages = p: [
           p.__package_name
@@ -62,7 +56,13 @@
           ++ (builtins.attrValues (import ./scripts.nix {s = pkgs.writeShellScriptBin;}));
       };
 
-      # nix build
-      defaultPackage = packages.__package_name;
+      # nix run
+      apps = {
+        __package_name = utils.mkApp {
+          drv = self.packages.${system}.default;
+        };
+
+        default = self.apps.${system}.__package_name;
+      };
     });
 }

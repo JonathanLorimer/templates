@@ -38,7 +38,6 @@
           extensions = ["rust-src"];
         });
 
-
       craneLib = crane.lib.${system}.overrideToolchain rustToolchain;
 
       src = craneLib.cleanCargoSource ./.;
@@ -49,7 +48,8 @@
           # Lint groups
           ["-D" "clippy::correctness"]
           ["-D" "clippy::complexity"]
-          ["-D" "clippy::perf"] ["-D" "clippy::style"]
+          ["-D" "clippy::perf"]
+          ["-D" "clippy::style"]
           ["-D" "clippy::nursery"]
           ["-D" "clippy::pedantic"]
           # Allowed by default
@@ -79,15 +79,15 @@
         // {
           inherit cargoArtifacts;
         });
-
     in {
       checks = {
         inherit template-picker;
 
-        template-picker-clippy = craneLib.cargoClippy (craneCommon // {
-          inherit cargoArtifacts;
-          cargoClippyExtraArgs = "--all-targets";
-        });
+        template-picker-clippy = craneLib.cargoClippy (craneCommon
+          // {
+            inherit cargoArtifacts;
+            cargoClippyExtraArgs = "--all-targets";
+          });
 
         # Check formatting
         template-picker-fmt = craneLib.cargoFmt {
@@ -145,19 +145,18 @@
 
         devshell = {
           name = "templates-devshell";
-          packages = with pkgs;
-            [
-              # Rust build inputs
-              clang
-              coreutils
+          packages = with pkgs; [
+            # Rust build inputs
+            clang
+            coreutils
 
-              # LSP's
-              rust-analyzer
+            # LSP's
+            rust-analyzer
 
-              # Tools
-              rustToolchain
-              alejandra
-            ];
+            # Tools
+            rustToolchain
+            alejandra
+          ];
         };
 
         env = [
@@ -166,7 +165,6 @@
             eval = "\"${builtins.toString craneCommon.RUSTFLAGS}\"";
           }
         ];
-
       };
     })
     // (import ./templates.nix);

@@ -3,6 +3,7 @@ use strum::EnumIter;
 use strum::EnumString;
 
 pub const PACKAGE_NAME_REPLACEMENT_TEXT: &str = "__package_name";
+pub const NIXPKGS_REPLACEMENT_TEXT: &str = "__nixpkgs";
 
 pub struct BasicData {
     pub package_name: String,

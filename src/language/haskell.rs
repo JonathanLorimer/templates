@@ -6,6 +6,7 @@ use spinners::Spinner;
 use spinners::Spinners;
 
 use crate::language::replacer;
+use crate::language::template::NIXPKGS_REPLACEMENT_TEXT;
 use crate::language::template::PACKAGE_NAME_REPLACEMENT_TEXT;
 use crate::language::template::TEMPLATE_REPO;
 
@@ -90,6 +91,7 @@ pub(crate) async fn create_haskell_template(
             vec![
                 (GHC_REPLACEMENT_TEXT, ghc_version),
                 (PACKAGE_NAME_REPLACEMENT_TEXT, &package_name),
+                (NIXPKGS_REPLACEMENT_TEXT, &nixpkgs_version),
             ],
         ),
         replacer::replace(

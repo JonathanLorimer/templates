@@ -9,26 +9,23 @@
 
   outputs = inputs:
     with inputs.flake-utils.lib;
-    eachDefaultSystem (system:
-
-    let
-      pkgs = import inputs.nixpkgs {
-        inherit system;
-      };
-      utils = inputs.flake-utils.lib;
-      cornelis = inputs.cornelis.packages.${system}.cornelis;
-    in
-      {
+      eachDefaultSystem (system: let
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+        };
+        utils = inputs.flake-utils.lib;
+        cornelis = inputs.cornelis.packages.${system}.cornelis;
+      in {
         # nix develop
-        devShell =
-          pkgs.mkShell {
-            buildInputs = with pkgs; [
-              cornelis
-              (agda.withPackages (ps: [
+        devShell = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            cornelis
+            (
+              agda.withPackages (ps: [
                 ps.standard-library
-                ])
-              )
-            ];
-          };
+              ])
+            )
+          ];
+        };
       });
 }

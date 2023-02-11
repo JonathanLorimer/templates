@@ -1,7 +1,6 @@
-{ pkgs }:
-
+{pkgs}:
 pkgs.writeShellScriptBin "init"
-  ''
+''
   set -e
 
   echo "What do you want this package to be called? "
@@ -46,4 +45,4 @@ pkgs.writeShellScriptBin "init"
   ${pkgs.git}/bin/git init
   ${pkgs.git}/bin/git add .
   ${pkgs.git}/bin/git branch -m main
-  ''
+''

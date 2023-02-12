@@ -10,7 +10,6 @@
   outputs = {
     self,
     nixpkgs,
-    pre-commit-hooks,
     flake-utils,
   }: let
     utils = flake-utils.lib;
@@ -29,7 +28,7 @@
         utils.flattenTree
         {
           __package_name = hsPkgs.__package_name;
-          default = self.packages.${system}.__package_name;
+          default = hsPkgs.__package_name;
         };
 
       # nix flake check
@@ -57,12 +56,13 @@
       };
 
       # nix run
-      apps = {
+      apps = let
         __package_name = utils.mkApp {
           drv = self.packages.${system}.default;
         };
-
-        default = self.apps.${system}.__package_name;
+      in {
+        inherit __package_name;
+        default = __package_name;
       };
     });
 }

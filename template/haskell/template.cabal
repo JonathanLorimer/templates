@@ -83,7 +83,7 @@ executable __package_name
 test-suite test
   import: common-opts
   type: exitcode-stdio-1.0
-  main-is: Test.hs
+  main-is: Spec.hs
   hs-source-dirs:
       test
   build-depends:
@@ -91,3 +91,4 @@ test-suite test
     , QuickCheck
     , hspec
     , hspec-expectations
+    , hspec-discover

@@ -10,7 +10,6 @@
   outputs = {
     self,
     nixpkgs,
-    pre-commit-hooks,
     flake-utils,
   }: let
     utils = flake-utils.lib;
@@ -21,6 +20,9 @@
       hsPkgs = pkgs.haskell.packages.${compilerVersion}.override {
         overrides = hfinal: hprev: {
           __package_name = hfinal.callCabal2nix "__package_name" ./. {};
+          # Needed for hls on ghc 9.2.5 and 9.4.3
+          # https://github.com/ddssff/listlike/issues/23
+          ListLike = pkgs.haskell.lib.dontCheck hprev.ListLike;
         };
       };
     in {
@@ -29,7 +31,7 @@
         utils.flattenTree
         {
           __package_name = hsPkgs.__package_name;
-          default = self.packages.${system}.__package_name;
+          default = hsPkgs.__package_name;
         };
 
       # nix flake check
@@ -57,12 +59,13 @@
       };
 
       # nix run
-      apps = {
+      apps = let
         __package_name = utils.mkApp {
           drv = self.packages.${system}.default;
         };
-
-        default = self.apps.${system}.__package_name;
+      in {
+        inherit __package_name;
+        default = __package_name;
       };
     });
 }

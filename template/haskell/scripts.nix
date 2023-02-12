@@ -1,4 +1,5 @@
 {s}: rec
 {
   ghcidScript = s "dev" "ghcid --command 'cabal new-repl lib:__package_name' --allow-eval --warnings";
+  hoogleScript = s "hgl" "hoogle serve";
 }

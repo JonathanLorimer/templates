@@ -20,6 +20,9 @@
       hsPkgs = pkgs.haskell.packages.${compilerVersion}.override {
         overrides = hfinal: hprev: {
           __package_name = hfinal.callCabal2nix "__package_name" ./. {};
+          # Needed for hls on ghc 9.2.5 and 9.4.3
+          # https://github.com/ddssff/listlike/issues/23
+          ListLike = pkgs.haskell.lib.dontCheck hprev.ListLike;
         };
       };
     in {

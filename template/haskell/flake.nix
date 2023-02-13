@@ -39,6 +39,9 @@
         __package_name = self.packages.${system}.__package_name;
       };
 
+      # nix fmt
+      formatter = pkgs.alejandra;
+
       # nix develop
       devShell = hsPkgs.shellFor {
         withHoogle = true;

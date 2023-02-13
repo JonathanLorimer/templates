@@ -30,8 +30,16 @@ pub async fn discharge_template_data(
     template_data: TemplateData,
 ) -> Result<(), anyhow::Error> {
     match template_data {
-        TemplateData::Haskell { ghc_version } => {
-            create_haskell_template(basic_data, &ghc_version).await
+        TemplateData::Haskell {
+            ghc_version,
+            language_extensions,
+        } => {
+            create_haskell_template(
+                basic_data,
+                &ghc_version,
+                language_extensions,
+            )
+            .await
         },
         TemplateData::Rust => create_rust_template(basic_data).await,
         TemplateData::Agda => create_agda_template(basic_data).await,

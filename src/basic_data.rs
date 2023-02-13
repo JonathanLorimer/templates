@@ -31,7 +31,9 @@ pub async fn collect_basic_data() -> Result<BasicData, anyhow::Error> {
                 nixpkgs_versions,
             )
             .with_filter(&|input, _, value, _| {
-                matcher.fuzzy_match(value, input).is_some()
+                matcher
+                    .fuzzy_match(&value.to_lowercase(), &input.to_lowercase())
+                    .is_some()
             })
             .prompt()
             .context("Couldn't collect nixpkgs version")?;

@@ -2,6 +2,7 @@ use anyhow::anyhow;
 use anyhow::Context;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
+use inquire::MultiSelect;
 use inquire::Select;
 use scraper::Html;
 use scraper::Selector;
@@ -18,6 +19,7 @@ use crate::language::template::TEMPLATE_REPO;
 pub(crate) async fn get_haskell_data(
     nixpkgs_version: &str,
 ) -> Result<TemplateData, anyhow::Error> {
+    // Get GHC Version
     let mut sp = Spinner::new(
         Spinners::Dots,
         "Fetching GHC versions in nixpkgs...".into(),
@@ -33,14 +35,42 @@ pub(crate) async fn get_haskell_data(
     let ghc_version_number =
         Select::new("Which ghc version would you like to use?", ghc_versions)
             .with_filter(&|input, _, value, _| {
-                matcher.fuzzy_match(value, input).is_some()
+                matcher
+                    .fuzzy_match(&value.to_lowercase(), &input.to_lowercase())
+                    .is_some()
             })
             .prompt()
             .context("Couldn't collect ghc version")?;
 
     let ghc_version = format!("ghc{}", ghc_version_number.replace('.', ""));
 
-    Ok(TemplateData::Haskell { ghc_version })
+    // Get Language Extensions
+    let mut sp = Spinner::new(
+        Spinners::Dots,
+        "Fetching language extensions from Hackage...".into(),
+    );
+    let all_haskell_extensions = get_haskell_extensions().await?;
+    sp.stop_and_persist(
+        "\x1b[32m✔\x1b[0m",
+        "Succesfully retrieved haskell extensions".into(),
+    );
+
+    let language_extensions = MultiSelect::new(
+        "Which language extensiosn would you like to use?",
+        all_haskell_extensions,
+    )
+    .with_filter(&|input, _, value, _| {
+        matcher
+            .fuzzy_match(&value.to_lowercase(), &input.to_lowercase())
+            .is_some()
+    })
+    .prompt()
+    .context("Couldn't collect ghc version")?;
+
+    Ok(TemplateData::Haskell {
+        ghc_version,
+        language_extensions,
+    })
 }
 
 pub(crate) async fn get_ghc_versions(
@@ -75,11 +105,32 @@ pub(crate) async fn get_ghc_versions(
     Ok(ghc_versions)
 }
 
+const HASKELL_EXTENSION_URL: &str = r"https://hackage.haskell.org/package/template-haskell/docs/Language-Haskell-TH-LanguageExtensions.html";
+
+pub(crate) async fn get_haskell_extensions()
+-> Result<Vec<String>, anyhow::Error> {
+    let res = reqwest::get(HASKELL_EXTENSION_URL).await?.text().await?;
+    let document = Html::parse_document(&res);
+    let selector = Selector::parse("td.src a").map_err(|_| {
+        anyhow!("Unable to scrape ghc version from nixpkgs github page")
+    })?;
+    let mut language_extensions: Vec<String> = document
+        .select(&selector)
+        .map(|node| node.inner_html())
+        .collect();
+
+    language_extensions.sort();
+
+    Ok(language_extensions)
+}
+
 const GHC_REPLACEMENT_TEXT: &str = "__ghcVersion";
+const DEFAULT_EXTENSIONS_TEXT: &str = "__default_extensions\n";
 
 pub(crate) async fn create_haskell_template(
     basic_data: BasicData,
     ghc_version: &str,
+    language_extensions: Vec<String>,
 ) -> Result<(), anyhow::Error> {
     let BasicData {
         package_name,
@@ -95,6 +146,16 @@ pub(crate) async fn create_haskell_template(
         .wait()
         .await?;
 
+    let formatted_language_extensions = if language_extensions.len() == 0 {
+        "".to_owned()
+    } else {
+        language_extensions
+            .into_iter()
+            .fold("\tdefault-extensions:\n ".to_owned(), |a, v| {
+                format!("{}\t\t{}\n", a.to_owned(), v)
+            })
+    };
+
     let (res1, res2, res3) = tokio::join!(
         replacer::replace_many(
             "./flake.nix",
@@ -109,10 +170,12 @@ pub(crate) async fn create_haskell_template(
             PACKAGE_NAME_REPLACEMENT_TEXT,
             &package_name,
         ),
-        replacer::replace(
+        replacer::replace_many(
             "./template.cabal",
-            PACKAGE_NAME_REPLACEMENT_TEXT,
-            &package_name,
+            vec![
+                (PACKAGE_NAME_REPLACEMENT_TEXT, &package_name),
+                (DEFAULT_EXTENSIONS_TEXT, &formatted_language_extensions),
+            ],
         )
     );
 

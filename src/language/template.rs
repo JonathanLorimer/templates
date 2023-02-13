@@ -18,7 +18,10 @@ pub enum Template {
 }
 
 pub enum TemplateData {
-    Haskell { ghc_version: String },
+    Haskell {
+        ghc_version: String,
+        language_extensions: Vec<String>,
+    },
     Rust,
     Agda,
 }

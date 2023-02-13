@@ -3,4 +3,4 @@ module Main where
 import Prelude
 
 main :: IO ()
-main = putStrLn "hello world"
+main = putStrLn "Hello world"

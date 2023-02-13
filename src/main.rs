@@ -1,5 +1,3 @@
-// use inquire::ui::RenderConfig;
-// use inquire::CustomUserError;
 use inquire::Select;
 use strum::IntoEnumIterator;
 use template_picker::basic_data::collect_basic_data;

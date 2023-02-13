@@ -1,8 +1,10 @@
 pub mod haskell;
 pub mod replacer;
+pub mod rust;
 pub mod template;
 
 use self::haskell::get_haskell_data;
+use self::rust::create_rust_template;
 use self::template::BasicData;
 use self::template::Template;
 use self::template::TemplateData;
@@ -30,6 +32,7 @@ pub async fn discharge_template_data(
         TemplateData::Haskell { ghc_version } => {
             create_haskell_template(basic_data, &ghc_version).await
         },
-        TemplateData::Rust | TemplateData::Idris | TemplateData::Agda => Ok(()),
+        TemplateData::Rust => create_rust_template(basic_data).await,
+        TemplateData::Idris | TemplateData::Agda => Ok(()),
     }
 }

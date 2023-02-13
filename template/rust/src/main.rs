@@ -1,4 +1,5 @@
-use __package_name::lib;
+use __package_name::lib::print_hello_world;
+
 fn main() {
-    println!("Hello, world!");
+    print_hello_world();
 }

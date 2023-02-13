@@ -1,5 +1,5 @@
 {
-  description = "A flake template for haskell flake projects";
+  description = "A flake for flake projects";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -98,15 +98,6 @@
         template-picker-audit = craneLib.cargoAudit {
           inherit src advisory-db;
         };
-        flake = {
-          path = ./template/flake;
-          description = "A template for a generic flake project";
-          welcomeText = ''
-            You just created a flake project.
-            run this command to add your projects name:
-              nix run github:JonathanLorimer/templates
-          '';
-        };
       };
 
       packages.default = template-picker;
@@ -116,6 +107,8 @@
           drv = template-picker;
         };
       };
+
+      formatter = pkgs.alejandra;
 
       devShells.default = pkgs.devshell.mkShell {
         commands = let

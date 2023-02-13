@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use anyhow::Context;
 use inquire::Select;
 use scraper::Html;
@@ -5,13 +6,12 @@ use scraper::Selector;
 use spinners::Spinner;
 use spinners::Spinners;
 
+use super::template::BasicData;
+use super::template::TemplateData;
 use crate::language::replacer;
 use crate::language::template::NIXPKGS_REPLACEMENT_TEXT;
 use crate::language::template::PACKAGE_NAME_REPLACEMENT_TEXT;
 use crate::language::template::TEMPLATE_REPO;
-
-use super::template::BasicData;
-use super::template::TemplateData;
 
 pub(crate) async fn get_haskell_data(
     nixpkgs_version: &str,
@@ -20,7 +20,7 @@ pub(crate) async fn get_haskell_data(
         Spinners::Dots,
         "Fetching GHC versions in nixpkgs...".into(),
     );
-    let ghc_versions = get_ghc_versions(nixpkgs_version).await.unwrap();
+    let ghc_versions = get_ghc_versions(nixpkgs_version).await?;
     sp.stop_and_persist(
         "\x1b[32m✔\x1b[0m",
         "Succesfully retrieved ghc versions".into(),
@@ -43,8 +43,10 @@ pub(crate) async fn get_ghc_versions(
     );
     let res = reqwest::get(ghc_version_address).await?.text().await?;
     let document = Html::parse_document(&res);
-    let selector =
-        Selector::parse(".js-navigation-open.Link--primary").unwrap();
+    let selector = Selector::parse(".js-navigation-open.Link--primary")
+        .map_err(|_| {
+            anyhow!("Unable to scrape ghc version from nixpkgs github page")
+        })?;
     let mut ghc_versions: Vec<String> = document
         .select(&selector)
         .filter_map(|node| {
@@ -54,7 +56,7 @@ pub(crate) async fn get_ghc_versions(
                 {
                     None
                 } else {
-                    Some(str.to_string())
+                    Some(str.to_owned())
                 }
             })
         })

@@ -3,9 +3,9 @@ pub async fn init_git() -> Result<(), anyhow::Error> {
         .arg("rev-parse")
         .arg("--is-inside-work-tree")
         .output()
-        .await;
+        .await?;
 
-    if is_in_git_tree.is_err() {
+    if !is_in_git_tree.status.success() {
         tokio::process::Command::new("git")
             .arg("init")
             .spawn()?

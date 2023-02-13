@@ -15,20 +15,7 @@ build-type:     Simple
 --   location: $gitrepo
 
 common common-opts
-  default-extensions:
-    LambdaCase
-    OverloadedStrings
-    ScopedTypeVariables
-    TupleSections
-    MultiWayIf
-    InstanceSigs
-    RecordWildCards
-    NamedFieldPuns
-    StrictData
-    GADTs
-    NoImplicitPrelude
-    ImportQualifiedPost
-    TypeApplications
+__default_extensions
   ghc-options:
     -Wall
     -threaded

@@ -1,6 +1,7 @@
 # Flake Templates
 
-[![Flake Templates Demo](https://asciinema.org/a/559359.svg)](https://asciinema.org/a/559359)
+![nix-templates](https://user-images.githubusercontent.com/32466011/218349988-10e02013-ab28-4f79-8531-484d737cb8ad.gif)
+
 
 An opinionated collection of flakes starter projects for different languages. Some flexibility is provided via a terminal ui.
 

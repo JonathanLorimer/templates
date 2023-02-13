@@ -2,30 +2,32 @@
   description = "__package_name";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/__nixpkgs;
     flake-utils.url = github:numtide/flake-utils;
-    cornelis.url = github:isovector/cornelis;
+    # Pinned while main is broken
+    cornelis.url = github:isovector/cornelis/7b72d947cf9be5119868bb833db8141cad02235e;
   };
 
-  outputs = inputs:
-    with inputs.flake-utils.lib;
-      eachDefaultSystem (system: let
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-        };
-        utils = inputs.flake-utils.lib;
-        cornelis = inputs.cornelis.packages.${system}.cornelis;
-      in {
+  outputs = {
+    self,
+    flake-utils,
+    cornelis,
+  }:
+    with flake-utils.lib;
+    eachDefaultSystem (system:
+
+    let
+      utils = flake-utils.lib;
+      cornelis = cornelis.packages.${system}.cornelis;
+      agda = cornelis.packages.${system}.agda;
+    in
+      {
         # nix develop
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            cornelis
-            (
-              agda.withPackages (ps: [
-                ps.standard-library
-              ])
-            )
-          ];
-        };
+        devShell =
+          pkgs.mkShell {
+            buildInputs = [
+              cornelis.packages.${system}.cornelis
+              cornelis.packages.${system}.agda
+            ];
+          };
       });
 }

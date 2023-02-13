@@ -1,8 +1,10 @@
+pub mod agda;
 pub mod haskell;
 pub mod replacer;
 pub mod rust;
 pub mod template;
 
+use self::agda::create_agda_template;
 use self::haskell::get_haskell_data;
 use self::rust::create_rust_template;
 use self::template::BasicData;
@@ -19,7 +21,6 @@ pub async fn collect_template_data(
             get_haskell_data(&basic_data.nixpkgs_version).await
         },
         Template::Rust => Ok(TemplateData::Rust),
-        Template::Idris => Ok(TemplateData::Idris),
         Template::Agda => Ok(TemplateData::Agda),
     }
 }
@@ -33,6 +34,6 @@ pub async fn discharge_template_data(
             create_haskell_template(basic_data, &ghc_version).await
         },
         TemplateData::Rust => create_rust_template(basic_data).await,
-        TemplateData::Idris | TemplateData::Agda => Ok(()),
+        TemplateData::Agda => create_agda_template(basic_data).await,
     }
 }

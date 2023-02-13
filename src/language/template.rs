@@ -14,15 +14,14 @@ pub struct BasicData {
 pub enum Template {
     Haskell,
     Rust,
-    Idris,
     Agda,
 }
 
 pub enum TemplateData {
     Haskell { ghc_version: String },
     Rust,
-    Idris,
     Agda,
 }
 
-pub const TEMPLATE_REPO: &str = option_env!("TEMPLATES_DEVELOPMENT_PATH").unwrap_or(r"github:JonathanLorimer/templates");
+pub const TEMPLATE_REPO: &str = option_env!("TEMPLATES_DEVELOPMENT_PATH")
+    .unwrap_or(r"github:JonathanLorimer/templates");

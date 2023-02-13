@@ -21,6 +21,7 @@ pub enum TemplateData {
     Haskell {
         ghc_version: String,
         language_extensions: Vec<String>,
+        hackage_packages: Vec<String>,
     },
     Rust,
     Agda,

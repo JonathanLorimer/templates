@@ -173,6 +173,10 @@
             name = "RUSTFLAGS";
             eval = "\"${builtins.toString craneCommon.RUSTFLAGS}\"";
           }
+          # {
+          #   name = "LIBCLANG_PATH";
+          #   eval = "\"${pkgs.libclang.lib}/lib\"";
+          # }
         ];
       };
     })

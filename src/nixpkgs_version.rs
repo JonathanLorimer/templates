@@ -8,12 +8,15 @@ pub async fn get_nixpkgs_versions() -> Result<Vec<String>, anyhow::Error> {
         .await?
         .json::<Value>()
         .await?;
-    let versions: Vec<String> = res["data"]["result"]
+    let mut versions: Vec<String> = res["data"]["result"]
         .as_array()
         .ok_or_else(|| anyhow!("Expected result to be an array"))?
         .iter()
         .filter_map(|val| val["metric"]["channel"].as_str())
         .map(|str| str.trim().to_owned())
         .collect();
+
+    versions.sort_by(|a, b| b.cmp(a));
+
     Ok(versions)
 }

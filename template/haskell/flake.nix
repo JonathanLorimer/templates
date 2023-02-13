@@ -35,7 +35,7 @@
         };
 
       # You can't build the __package_name package as a check because of IFD in cabal2nix
-      checks = { };
+      checks = {};
 
       # nix fmt
       formatter = pkgs.alejandra;

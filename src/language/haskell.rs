@@ -1,5 +1,7 @@
 use anyhow::anyhow;
 use anyhow::Context;
+use fuzzy_matcher::skim::SkimMatcherV2;
+use fuzzy_matcher::FuzzyMatcher;
 use inquire::Select;
 use scraper::Html;
 use scraper::Selector;
@@ -25,8 +27,14 @@ pub(crate) async fn get_haskell_data(
         "\x1b[32m✔\x1b[0m",
         "Succesfully retrieved ghc versions".into(),
     );
+
+    let matcher = SkimMatcherV2::default();
+
     let ghc_version_number =
         Select::new("Which ghc version would you like to use?", ghc_versions)
+            .with_filter(&|input, _, value, _| {
+                matcher.fuzzy_match(value, input).is_some()
+            })
             .prompt()
             .context("Couldn't collect ghc version")?;
 

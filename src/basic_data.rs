@@ -1,4 +1,6 @@
 use anyhow::Context;
+use fuzzy_matcher::skim::SkimMatcherV2;
+use fuzzy_matcher::FuzzyMatcher;
 use inquire::Select;
 use inquire::Text;
 use spinners::Spinner;
@@ -14,6 +16,7 @@ pub async fn collect_basic_data() -> Result<BasicData, anyhow::Error> {
 
     let mut sp =
         Spinner::new(Spinners::Dots, "Fetching nixpkgs versions...".into());
+
     match get_nixpkgs_versions().await {
         Ok(nixpkgs_versions) => {
             sp.stop_and_persist(
@@ -21,10 +24,15 @@ pub async fn collect_basic_data() -> Result<BasicData, anyhow::Error> {
                 "Succesfully retrieved nixpkgs versions".into(),
             );
 
+            let matcher = SkimMatcherV2::default();
+
             let nixpkgs_version: String = Select::new(
                 "Which nixpkgs version would you like to use?",
                 nixpkgs_versions,
             )
+            .with_filter(&|input, _, value, _| {
+                matcher.fuzzy_match(value, input).is_some()
+            })
             .prompt()
             .context("Couldn't collect nixpkgs version")?;
 
@@ -32,13 +40,13 @@ pub async fn collect_basic_data() -> Result<BasicData, anyhow::Error> {
                 package_name,
                 nixpkgs_version,
             })
-        }
+        },
         Err(e) => {
             sp.stop_and_persist(
                 "\x1b[31m✘\x1b[0m",
                 "Failed to retrieve nixpkgs versions, perhaps try again".into(),
             );
             Err(e)
-        }
+        },
     }
 }

@@ -34,10 +34,8 @@
           default = hsPkgs.__package_name;
         };
 
-      # nix flake check
-      checks = {
-        __package_name = self.packages.${system}.__package_name;
-      };
+      # You can't build the __package_name package as a check because of IFD in cabal2nix
+      checks = { };
 
       # nix fmt
       formatter = pkgs.alejandra;

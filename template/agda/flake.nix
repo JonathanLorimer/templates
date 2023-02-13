@@ -13,21 +13,17 @@
     cornelis,
   }:
     with flake-utils.lib;
-    eachDefaultSystem (system:
-
-    let
-      utils = flake-utils.lib;
-      cornelis = cornelis.packages.${system}.cornelis;
-      agda = cornelis.packages.${system}.agda;
-    in
-      {
+      eachDefaultSystem (system: let
+        utils = flake-utils.lib;
+        cornelis = cornelis.packages.${system}.cornelis;
+        agda = cornelis.packages.${system}.agda;
+      in {
         # nix develop
-        devShell =
-          pkgs.mkShell {
-            buildInputs = [
-              cornelis.packages.${system}.cornelis
-              cornelis.packages.${system}.agda
-            ];
-          };
+        devShell = pkgs.mkShell {
+          buildInputs = [
+            cornelis.packages.${system}.cornelis
+            cornelis.packages.${system}.agda
+          ];
+        };
       });
 }

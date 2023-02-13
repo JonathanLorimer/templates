@@ -23,8 +23,15 @@
     advisory-db,
   }: let
     utils = flake-utils.lib;
+
+    supportedSystems = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
+    ];
   in
-    utils.eachDefaultSystem (system: let
+    utils.eachSystem supportedSystems (system: let
       pkgs = import nixpkgs {
         inherit system;
         overlays = [

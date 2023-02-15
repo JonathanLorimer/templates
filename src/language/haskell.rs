@@ -4,6 +4,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use inquire::MultiSelect;
 use inquire::Select;
+use rnix::ast::HasEntry;
 use scraper::Html;
 use scraper::Selector;
 use spinners::Spinner;
@@ -56,20 +57,37 @@ pub(crate) async fn get_haskell_data(
     );
 
     let language_extensions = MultiSelect::new(
-        "Which language extensiosn would you like to use?",
+        "Which language extensions would you like to use?",
         all_haskell_extensions,
     )
     .with_filter(&|input, _, value, _| {
-        matcher
-            .fuzzy_match(&value.to_lowercase(), &input.to_lowercase())
-            .is_some()
+        matcher.fuzzy_match(&value.to_lowercase(), &input.to_lowercase()).is_some()
     })
     .prompt()
     .context("Couldn't collect ghc version")?;
 
+    // Get Hackage Packages
+    let mut sp = Spinner::new(
+        Spinners::Dots,
+        "Fetching hackage packages from nixpkgs...".into(),
+    );
+    let all_hackage_packages = get_hackage_packages(nixpkgs_version).await?;
+    sp.stop_and_persist(
+        "\x1b[32m✔\x1b[0m",
+        "Succesfully retrieved haskell extensions".into(),
+    );
+
+    let hackage_packages = MultiSelect::new(
+        "Which default packages would you like to use?",
+        all_hackage_packages,
+    )
+    .prompt()
+    .context("Couldn't collect default packages")?;
+
     Ok(TemplateData::Haskell {
         ghc_version,
         language_extensions,
+        hackage_packages,
     })
 }
 
@@ -124,13 +142,69 @@ pub(crate) async fn get_haskell_extensions()
     Ok(language_extensions)
 }
 
+pub(crate) async fn get_hackage_packages(
+    nixpkgs_version: &str,
+) -> Result<Vec<String>, anyhow::Error> {
+    let haskell_packages_address = format!(
+        "https://raw.githubusercontent.com/NixOS/nixpkgs/{nixpkgs_version}/pkgs/development/haskell-modules/hackage-packages.nix"
+    );
+    let res = reqwest::get(haskell_packages_address).await?.text().await?;
+
+    let ast = rnix::Root::parse(&res).ok()?;
+    let hackage_packages = match ast.expr() {
+        Some(rnix::ast::Expr::Lambda(expr)) => {
+            match expr.body() {
+                Some(rnix::ast::Expr::Lambda(expr)) => {
+                    if let Some(rnix::ast::Expr::AttrSet(set)) = expr.body() {
+                        Ok(set
+                            .entries()
+                            .filter_map(|node| {
+                                if let rnix::ast::Entry::AttrpathValue(
+                                    attrpath_value,
+                                ) = node
+                                {
+                                    attrpath_value.attrpath().map(|path| {
+                                        path.to_string().replace("\"", "")
+                                    })
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect::<Vec<String>>())
+                    } else {
+                        Err(anyhow!("Expected a attrset"))
+                    }
+                },
+                _ => Err(anyhow!("Expected a lambda")),
+            }
+        },
+        _ => Err(anyhow!("Expected a lambda")),
+    }?;
+
+    Ok(hackage_packages)
+}
+
+#[cfg(test)]
+#[allow(clippy::expect_used)]
+mod tests {
+    use super::get_hackage_packages;
+
+    #[tokio::test]
+    pub async fn test_get_hackage_packages() {
+        get_hackage_packages("nixpkgs-unstable").await.unwrap();
+    }
+}
+
 const GHC_REPLACEMENT_TEXT: &str = "__ghcVersion";
 const DEFAULT_EXTENSIONS_TEXT: &str = "__default_extensions\n";
+const DEFAULT_PACKAGES_TEXT: &str = "__default_build_depends\n";
+
 
 pub(crate) async fn create_haskell_template(
     basic_data: BasicData,
     ghc_version: &str,
     language_extensions: Vec<String>,
+    hackage_packages: Vec<String>,
 ) -> Result<(), anyhow::Error> {
     let BasicData {
         package_name,
@@ -156,6 +230,16 @@ pub(crate) async fn create_haskell_template(
             })
     };
 
+    let formatted_hackage_packages = if hackage_packages.len() == 0 {
+        "".to_owned()
+    } else {
+        hackage_packages
+            .into_iter()
+            .fold("".to_owned(), |a, v| {
+                format!("{}\t\t, {}\n", a.to_owned(), v)
+            })
+    };
+
     let (res1, res2, res3) = tokio::join!(
         replacer::replace_many(
             "./flake.nix",
@@ -175,6 +259,7 @@ pub(crate) async fn create_haskell_template(
             vec![
                 (PACKAGE_NAME_REPLACEMENT_TEXT, &package_name),
                 (DEFAULT_EXTENSIONS_TEXT, &formatted_language_extensions),
+                (DEFAULT_PACKAGES_TEXT, &formatted_hackage_packages),
             ],
         )
     );

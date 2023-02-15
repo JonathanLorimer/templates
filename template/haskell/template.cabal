@@ -23,30 +23,7 @@ __default_extensions
     -with-rtsopts=-N
   build-depends:
       base
-
-    -- Codecs
-    , aeson
-    , deriving-aeson
-    , binary
-
-    -- Parallelism
-    , async
-
-    -- Mutability
-    , primitive
-
-    -- Binary
-    , bytestring
-    , vector
-
-    -- Containers
-    , containers
-    , unordered-containers
-
-    -- Utilities
-    , text
-    , foldl
-    , safe-exceptions
+__default_build_depends
 
   default-language: Haskell2010
 

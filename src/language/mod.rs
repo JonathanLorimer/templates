@@ -33,11 +33,13 @@ pub async fn discharge_template_data(
         TemplateData::Haskell {
             ghc_version,
             language_extensions,
+            hackage_packages,
         } => {
             create_haskell_template(
                 basic_data,
                 &ghc_version,
                 language_extensions,
+                hackage_packages,
             )
             .await
         },

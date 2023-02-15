@@ -1,7 +1,7 @@
 [package]
 name = "__package_name"
 version = "0.1.0"
-authors = ["Jonathan Lorimer <jonathan_lorimer@mac.com>"]
+authors = []
 edition = "2021"
 
 [dependencies]

@@ -156,7 +156,7 @@ pub(crate) async fn create_haskell_template(
             })
     };
 
-    let (res1, res2, res3) = tokio::join!(
+    let (res1, res2, res3, res4) = tokio::join!(
         replacer::replace_many(
             "./flake.nix",
             vec![
@@ -167,6 +167,11 @@ pub(crate) async fn create_haskell_template(
         ),
         replacer::replace(
             "./scripts.nix",
+            PACKAGE_NAME_REPLACEMENT_TEXT,
+            &package_name,
+        ),
+        replacer::replace(
+            "./hie.yaml",
             PACKAGE_NAME_REPLACEMENT_TEXT,
             &package_name,
         ),
@@ -182,6 +187,7 @@ pub(crate) async fn create_haskell_template(
     res1?;
     res2?;
     res3?;
+    res4?;
 
     tokio::fs::rename("./template.cabal", format!("./{package_name}.cabal"))
         .await?;

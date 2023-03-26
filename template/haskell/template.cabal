@@ -16,11 +16,7 @@ build-type:     Simple
 
 common common-opts
 __default_extensions
-  ghc-options:
-    -Wall
-    -threaded
-    -rtsopts
-    -with-rtsopts=-N
+
   build-depends:
       base
 

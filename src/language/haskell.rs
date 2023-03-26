@@ -151,8 +151,8 @@ pub(crate) async fn create_haskell_template(
     } else {
         language_extensions
             .into_iter()
-            .fold("\tdefault-extensions:\n ".to_owned(), |a, v| {
-                format!("{}\t\t{}\n", a.to_owned(), v)
+            .fold("  default-extensions:\n ".to_owned(), |a, v| {
+                format!("{}    {}\n", a.to_owned(), v)
             })
     };
 

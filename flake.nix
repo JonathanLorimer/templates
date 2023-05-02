@@ -36,7 +36,7 @@
         inherit system;
         overlays = [
           (import rustOverlay)
-          devshell.overlay
+          devshell.overlays.default
         ];
       };
 

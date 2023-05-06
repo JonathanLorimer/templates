@@ -26,5 +26,7 @@ pub enum TemplateData {
     Agda,
 }
 
-pub const TEMPLATE_REPO: &str = option_env!("TEMPLATES_DEVELOPMENT_PATH")
-    .unwrap_or(r"github:JonathanLorimer/templates");
+pub const TEMPLATE_REPO: &str = match option_env!("TEMPLATES_DEVELOPMENT_PATH") {
+    Some(v) => v,
+    None => r"github:JonathanLorimer/templates"
+};

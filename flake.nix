@@ -163,6 +163,7 @@
             rust-analyzer
 
             # Tools
+            cargo-watch
             rustToolchain
             alejandra
           ];

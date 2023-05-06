@@ -29,7 +29,7 @@
         inherit system;
         overlays = [
           (import rustOverlay)
-          devshell.overlay
+          devshell.overlays.default
         ];
       };
 
@@ -114,6 +114,7 @@
         commands = let
           categories = {
             hygiene = "hygiene";
+            development = "development";
           };
         in [
           {
@@ -136,6 +137,12 @@
             '';
             category = categories.hygiene;
           }
+          {
+            help = "Run cargo in watch mode";
+            name = "watch";
+            command = "cargo watch";
+            category = categories.development;
+          }
         ];
 
         imports = ["${devshell}/extra/language/rust.nix"];
@@ -156,6 +163,7 @@
             rust-analyzer
 
             # Tools
+            cargo-watch
             rustToolchain
             alejandra
           ];

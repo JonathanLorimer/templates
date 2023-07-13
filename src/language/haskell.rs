@@ -4,6 +4,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use inquire::MultiSelect;
 use inquire::Select;
+use octorust::Client;
 use scraper::Html;
 use scraper::Selector;
 use spinners::Spinner;
@@ -76,19 +77,22 @@ pub(crate) async fn get_haskell_data(
 pub(crate) async fn get_ghc_versions(
     nixpkgs_version: &str,
 ) -> Result<Vec<String>, anyhow::Error> {
-    let ghc_version_address = format!(
-        "https://github.com/NixOS/nixpkgs/tree/{nixpkgs_version}/pkgs/development/compilers/ghc"
-    );
-    let res = reqwest::get(ghc_version_address).await?.text().await?;
-    let document = Html::parse_document(&res);
-    let selector = Selector::parse(".js-navigation-open.Link--primary")
-        .map_err(|_| {
-            anyhow!("Unable to scrape ghc version from nixpkgs github page")
-        })?;
-    let mut ghc_versions: Vec<String> = document
-        .select(&selector)
-        .filter_map(|node| {
-            node.inner_html().strip_suffix(".nix").and_then(|str| {
+
+    let github = Client::new(
+      String::from("JonathanLorimer"),
+      None,
+    )?;
+
+    let files = github.repos().get_content_vec_entries(
+        "NixOS",
+        "nixpkgs",
+        "/pkgs/development/compilers/ghc",
+        nixpkgs_version
+    ).await?;
+
+    let mut ghc_versions: Vec<String> = files.iter()
+        .filter_map(|entry| {
+            entry.name.strip_suffix(".nix").and_then(|str| {
                 if str.ends_with("binary")
                     || !str.chars().all(|c| c.is_numeric() || c == '.')
                 {

@@ -3,6 +3,6 @@ cradle:
     - path: "./src"
       component: "lib:__package_name"
     - path: "./test"
-      component: "__package_name:test"
+      component: "test:__package_name-tests"
     - path: "./app"
       component: "exe:__package_name"

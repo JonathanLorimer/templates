@@ -6,7 +6,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-inquire = { version = "0.5.3", default-features = false, features = ["crossterm", "macros"] }
+inquire = { version = "0.6.2", default-features = false, features = ["crossterm", "macros"] }
 reqwest = { version = "0.11.14", default-features = false, features = ["json", "rustls-tls-native-roots"] }
 tokio = { version = "1.25.0", default-features = false, features = ["rt-multi-thread", "macros", "process", "fs"] }
 strum = { version = "0.25", default-features = false, features = ["derive"] }

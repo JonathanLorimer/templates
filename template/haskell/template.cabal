@@ -49,16 +49,17 @@ __default_extensions
 
 library
   import: common-opts
+
+  -- cabal-fmt: expand src
   exposed-modules:
       Core
+
   hs-source-dirs:
       src
 
 executable __package_name
   import: common-opts
   main-is: Main.hs
-  exposed-modules:
-      Main
   hs-source-dirs:
       app
   build-depends: __package_name

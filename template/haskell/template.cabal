@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version: 3.4
 
 name:           __package_name
 version:        0.0.0.0
@@ -64,15 +64,24 @@ executable __package_name
       app
   build-depends: __package_name
 
-test-suite test
+test-suite __package_name-tests
   import: common-opts
   type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  hs-source-dirs:
-      test
+  hs-source-dirs: test
+
+  ghc-options:
+    -Wall -threaded -rtsopts -with-rtsopts=-N -fdefer-typed-holes -O0
+
+  main-is: Main.hs
+
+  -- cabal-fmt: expand test -Main
+  other-modules:
+
   build-depends:
     , __package_name
-    , QuickCheck
+    , hedgehog
     , hspec
-    , hspec-expectations
+    , hspec-core
     , hspec-discover
+    , hspec-expectations
+    , hspec-hedgehog

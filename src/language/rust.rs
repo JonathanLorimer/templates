@@ -46,9 +46,8 @@ pub(crate) async fn create_rust_template(
     res3?;
 
     tokio::process::Command::new("nix")
-        .arg("develop")
-        .arg("-c")
-        .arg("cargo")
+        .arg("run")
+        .arg("nixpkgs#cargo")
         .arg("generate-lockfile")
         .spawn()?
         .wait()

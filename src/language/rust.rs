@@ -49,7 +49,7 @@ pub(crate) async fn create_rust_template(
         .arg("develop")
         .arg("-c")
         .arg("cargo")
-        .arg("fetch")
+        .arg("generate-lockfile")
         .spawn()?
         .wait()
         .await?;

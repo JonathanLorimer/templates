@@ -51,6 +51,10 @@
 
       craneCommon = {
         inherit src;
+        buildInputs = [
+          pkgs.pkg-config
+          pkgs.openssl
+        ] ++ (if pkgs.stdenv.isDarwin then [pkgs.darwin.apple_sdk.frameworks.Security] else []);
         RUSTFLAGS = [
           # Lint groups
           ["-D" "clippy::correctness"]

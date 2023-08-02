@@ -1,7 +1,7 @@
 module Main where
 
 import Data.Maybe (fromMaybe)
-import Spec qualified
+import Spec as Spec
 import System.Environment (lookupEnv)
 import Test.Hspec (parallel)
 import Test.Hspec.Core.Runner (Config (..))

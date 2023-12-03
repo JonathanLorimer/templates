@@ -28,6 +28,13 @@ rec {
         You just created an agda project.
       '';
     };
+    terraform = {
+      path = ./template/terraform;
+      description = "A template for a Terraform project";
+      welcomeText = ''
+        You just created a Terraform project.
+      '';
+    };
   };
 
   defaultTemplate = templates.haskell;

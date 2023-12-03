@@ -1,9 +1,11 @@
 pub mod agda;
 pub mod haskell;
+pub mod terraform;
 pub mod replacer;
 pub mod rust;
 pub mod template;
 
+use self::terraform::create_terraform_template;
 use self::agda::create_agda_template;
 use self::haskell::get_haskell_data;
 use self::rust::create_rust_template;
@@ -22,6 +24,7 @@ pub async fn collect_template_data(
         },
         Template::Rust => Ok(TemplateData::Rust),
         Template::Agda => Ok(TemplateData::Agda),
+        Template::Terraform => Ok(TemplateData::Terraform),
     }
 }
 
@@ -43,5 +46,6 @@ pub async fn discharge_template_data(
         },
         TemplateData::Rust => create_rust_template(basic_data).await,
         TemplateData::Agda => create_agda_template(basic_data).await,
+        TemplateData::Terraform => create_terraform_template(basic_data).await,
     }
 }

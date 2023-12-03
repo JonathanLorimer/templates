@@ -15,6 +15,7 @@ pub enum Template {
     Haskell,
     Rust,
     Agda,
+    Terraform
 }
 
 pub enum TemplateData {
@@ -24,6 +25,7 @@ pub enum TemplateData {
     },
     Rust,
     Agda,
+    Terraform
 }
 
 pub const TEMPLATE_REPO: &str = match option_env!("TEMPLATES_DEVELOPMENT_PATH") {

@@ -84,10 +84,10 @@
             });
     in {
       checks = forAllSystems ({
-        __package_name, 
-        craneLib, 
-        craneCommon, 
-        cargoArtifacts, 
+        __package_name,
+        craneLib,
+        craneCommon,
+        cargoArtifacts,
         src, ...
       }: {
         inherit __package_name;
@@ -111,26 +111,26 @@
 
       formatter = forAllSystems ({ pkgs, ... }: pkgs.alejandra);
 
-      packages = forAllSystems ({ __package_name, ... }: { 
+      packages = forAllSystems ({ __package_name, ... }: {
         inherit __package_name;
-        default = __package_name; 
-      }); 
+        default = __package_name;
+      });
 
       apps = forAllSystems ({system, ...}: {
-        __package_name = { 
-          type = "app"; 
-          program = "${self.packages.${system}.__package_name}/bin/__package_name"; 
+        __package_name = {
+          type = "app";
+          program = "${self.packages.${system}.__package_name}/bin/__package_name";
         };
         default = self.apps.${system}.__package_name;
       });
 
-      devShells.default = forAllSystems ({
-        craneCommon, 
-        rustToolchain, 
-        pkgs, 
-        system, 
+      devShells = forAllSystems ({
+        craneCommon,
+        rustToolchain,
+        pkgs,
         ...
       }: {
+        default = pkgs.devshell.mkShell {
         commands = let
           categories = {
             hygiene = "hygiene";
@@ -195,6 +195,7 @@
             eval = "\"${builtins.toString craneCommon.RUSTFLAGS}\"";
           }
         ];
+        };
       });
     };
 }

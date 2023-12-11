@@ -44,7 +44,7 @@ pub(crate) async fn create_agda_template(
 
     println!(
         r"
-        Template: Haskell
+        Template: Agda
         Package Name: {package_name}
         Nixpkgs Version: {nixpkgs_version}
         "

@@ -195,6 +195,12 @@ pub(crate) async fn create_haskell_template(
 
     tokio::fs::rename("./template.cabal", format!("./{package_name}.cabal"))
         .await?;
+    tokio::process::Command::new("git")
+	.arg("add")
+	.arg(format!("./{package_name}.cabal"))
+	.spawn()?
+	.wait()
+	.await?;
 
     println!(
         r"

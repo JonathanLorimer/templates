@@ -45,7 +45,7 @@
           extensions = ["rust-src"];
         });
 
-      craneLib = crane.lib.${system}.overrideToolchain rustToolchain;
+      craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
 
       src = craneLib.cleanCargoSource ./.;
 
